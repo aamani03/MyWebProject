@@ -1,15 +1,10 @@
-package DBInterface
+package dbInterface
 
 type User struct {
 	UserID   int
 	Name     string
 	Email    string
 	Password string
-}
-
-func (u User) f() (int32, int8) {
-	//TODO implement me
-	panic("implement me")
 }
 
 type Task struct {
@@ -32,14 +27,8 @@ type Notification struct {
 	TaskID         int
 }
 
-type UserService interface {
-}
+// type StatusService interface {
+// }
 
-type TaskService interface {
-}
-
-type StatusService interface {
-}
-
-type NotificationService interface {
-}
+// type NotificationService interface {
+// }
