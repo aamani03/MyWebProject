@@ -13,14 +13,10 @@ type TaskService interface {
 	//GetTasksByUser(userID string) ([]Task, error)
 }
 
-type TaskRepo struct {
-	DB *sql.DB
-}
-
 func (r *DbRepo) CreateTask(task *Task) (int, error) {
 	query := `INSERT INTO tasks (name, description, user_id, status_id) VALUES (?, ?, ?, ?)`
 
-	result, err := r.DB.Exec(query, task.TaskName, task.TaskDesc, task.UserID, task.StatusID)
+	result, err := r.SqlConnection.Exec(query, task.TaskName, task.TaskDesc, task.UserID, task.StatusID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create task: %v", err)
 	}
@@ -36,7 +32,7 @@ func (r *DbRepo) CreateTask(task *Task) (int, error) {
 func (r *DbRepo) GetTask(id string) (*Task, error) {
 	query := `SELECT id, name, description, user_id, status_id FROM tasks WHERE id = ?`
 
-	row := r.DB.QueryRow(query, id)
+	row := r.SqlConnection.QueryRow(query, id)
 
 	var task Task
 	err := row.Scan(&task.TaskID, &task.TaskName, &task.TaskDesc, &task.UserID, &task.StatusID)
@@ -52,7 +48,7 @@ func (r *DbRepo) GetTask(id string) (*Task, error) {
 func (r *DbRepo) UpdateTask(task *Task) error {
 	query := `UPDATE tasks SET name = ?, description = ?, user_id = ?, status_id = ? WHERE id = ?`
 
-	result, err := r.DB.Exec(query, task.TaskName, task.TaskDesc, task.UserID, task.StatusID, task.TaskID)
+	result, err := r.SqlConnection.Exec(query, task.TaskName, task.TaskDesc, task.UserID, task.StatusID, task.TaskID)
 	if err != nil {
 		return fmt.Errorf("failed to update task: %v", err)
 	}
@@ -71,7 +67,7 @@ func (r *DbRepo) UpdateTask(task *Task) error {
 func (r *DbRepo) DeleteTask(id string) error {
 	query := `DELETE FROM tasksWHERE id = ?`
 
-	result, err := r.DB.Exec(query, id)
+	result, err := r.SqlConnection.Exec(query, id)
 	if err != nil {
 		return fmt.Errorf("failed to delete task: %v", err)
 	}

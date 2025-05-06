@@ -2,6 +2,7 @@ package dbInterface
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -15,16 +16,16 @@ type UserService interface {
 }
 
 type DbRepo struct {
-	DB *sql.DB
+	SqlConnection *sql.DB
 }
 
 func (u *DbRepo) GetUser(id string) (*User, error) {
-	row := u.DB.QueryRow("SELECT id, name, email FROM users WHERE id = ?", id)
+	row := u.SqlConnection.QueryRow("SELECT id, name, email FROM users WHERE id = ?", id)
 
 	var user User
 	err := row.Scan(&user.UserID, &user.Name, &user.Email)
 	if err == sql.ErrNoRows {
-		return nil, fmt.Errorf("user not found")
+		return nil, errors.New("User not found")
 	}
 
 	return &user, err
@@ -33,33 +34,35 @@ func (u *DbRepo) GetUser(id string) (*User, error) {
 func (u *DbRepo) CreateUser(usr *User) (string, error) {
 	query := "INSERT INTO users (name, email, password) VALUES (?, ?, ?)"
 
-	result, err := u.DB.Exec(query, usr.Name, usr.Email, usr.Password)
+	result, err := u.SqlConnection.Exec(query, usr.Name, usr.Email, usr.Password)
 
 	if err != nil {
-		fmt.Errorf("failed to create user: %v", err)
+		return "", err
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return "", fmt.Errorf("failed to retrive last inserted id", err)
+		return "", fmt.Errorf("failed to retrive last inserted id %v", err)
 	}
 
 	return fmt.Sprint("id", id), nil
 }
+
 func (u *DbRepo) UpdateUser(usr *User) error {
 	query := `UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?`
 
-	_, err := u.DB.Exec(query, usr.Name, usr.Email, usr.Password, usr.UserID)
+	_, err := u.SqlConnection.Exec(query, usr.Name, usr.Email, usr.Password, usr.UserID)
 	if err != nil {
 		return fmt.Errorf("failed to update user: %v", err)
 	}
 
 	return nil
 }
+
 func (u *DbRepo) DeleteUser(usr *User) error {
 	query := "DELETE FROM users WHERE id = ?"
 
-	result, err := u.DB.Exec(query, usr.UserID)
+	result, err := u.SqlConnection.Exec(query, usr.UserID)
 	if err != nil {
 		return fmt.Errorf("failed to delete user: %v", err)
 	}
@@ -74,5 +77,6 @@ func (u *DbRepo) DeleteUser(usr *User) error {
 
 	return nil
 }
+
 func (u *DbRepo) LoginUser(usr *User) error  { return nil }
 func (u *DbRepo) LogoutUser(usr *User) error { return nil }
