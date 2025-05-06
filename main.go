@@ -1,14 +1,14 @@
 package main
 
 import (
-	"Amani_Classes/MyWebProject/dbInterface"
+	"MyWebProject/dbInterface"
 	"database/sql"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 func connectToDB() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/exampledb")
+	db, err := sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/taskmanager")
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func main() {
 	var userCOnfusion dbInterface.UserService
 
 	userCOnfusion = &dbInterface.DbRepo{DB: db}
-	// userCOnfusion.GetUser("User1")
+	//userCOnfusion.GetUser("User1")
 
 	userCOnfusion = &dbInterface.TaskRepo{DB: db}
 
