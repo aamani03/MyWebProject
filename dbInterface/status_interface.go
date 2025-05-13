@@ -5,6 +5,14 @@ import (
 	"fmt"
 )
 
+type StatusService interface {
+	CreateStatus(*Task) (int, error)
+	GetStatus(id string) (*Task, error)
+	UpdateStatus(*Task) error
+	DeleteStatus(id string) error
+	//GetTasksByUser(userID string) ([]Task, error)
+}
+
 func (r *DbRepo) CreateStatus(status *Status) (int, error) {
 	query := `INSERT INTO statuses (name, color) VALUES (?, ?)`
 	result, err := r.SqlConnection.Exec(query, status.StatusName, status.Color)
