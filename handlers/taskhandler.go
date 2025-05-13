@@ -10,7 +10,7 @@ import (
 
 var TaskObj dbInterface.TaskService
 
-func Taskhandler(resp http.ResponseWriter, req http.Request) {
+func Taskhandler(resp http.ResponseWriter, req *http.Request) {
 
 	if req.Method != http.MethodGet {
 		resp.WriteHeader(503)

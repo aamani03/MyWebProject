@@ -3,6 +3,7 @@ package main
 import (
 	"MyWebProject/dbInterface"
 	"MyWebProject/handlers"
+	"MyWebProject/handlers/user"
 	"database/sql"
 
 	"net/http"
@@ -38,10 +39,25 @@ func main() {
 	TaskObj = &dbInterface.DbRepo{SqlConnection: DBConn}
 
 	router := mux.NewRouter()
-	router.HandleFunc("/user/{id}", handlers.GetUser) // http://localhost:8800/user/sdvkjrni3f3
+	router.HandleFunc("/user/{id}", getUserHandler) // http://localhost:8800/user/sdvkjrni3f3
+	router.HandleFunc("/user/create", createUserHandler)
 
 	router.HandleFunc("/task/{id}", handlers.Taskhandler)
 
 	http.ListenAndServe(":8800", router)
 
+}
+
+func getUserHandler(resp http.ResponseWriter, req *http.Request) {
+	user.GetUser(resp, user.GetUserRequestWrapper{
+		Req:     req,
+		UserSvc: UserObj,
+	})
+}
+
+func createUserHandler(resp http.ResponseWriter, req *http.Request) {
+	user.CreateUser(resp, user.CreateUserRequestWrapper{
+		Req:     req,
+		UserSvc: UserObj,
+	})
 }

@@ -1,19 +1,25 @@
-package handlers
+package user
 
 import (
+	"MyWebProject/dbInterface"
 	"encoding/json"
 	"net/http"
 )
 
-func GetUser(resp http.ResponseWriter, req *http.Request) {
-	if req.Method != http.MethodGet {
+type GetUserRequestWrapper struct {
+	Req     *http.Request
+	UserSvc dbInterface.UserService
+}
+
+func GetUser(resp http.ResponseWriter, reqObj GetUserRequestWrapper) {
+	if reqObj.Req.Method != http.MethodGet {
 		resp.WriteHeader(503)
 		resp.Write([]byte("invalid method"))
 	}
 
-	userId := req.URL.Query().Get("id")
+	userId := reqObj.Req.URL.Query().Get("id")
 
-	userData, err := UserObj.GetUser(userId)
+	userData, err := reqObj.UserSvc.GetUser(userId)
 	if err != nil {
 		resp.Write([]byte("Error getting user"))
 		return

@@ -1,10 +1,10 @@
 package dbInterface
 
 type User struct {
-	UserID   int
-	Name     string
-	Email    string
-	Password string
+	UserID   int    `json:"user_id,omitempty"`
+	Name     string `json:"name"`
+	Email    string `json:"email_id"`
+	Password string `json:"password_id"`
 }
 
 type Task struct {
